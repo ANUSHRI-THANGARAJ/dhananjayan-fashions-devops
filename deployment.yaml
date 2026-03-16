@@ -1,0 +1,26 @@
+# Kubernetes Deployment for Dhananjayan Fashions
+# Deploy 2 replicas of backend Node.js container
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dhanan-fashions-backend
+  labels:
+    app: dhanan-fashions
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dhanan-fashions
+  template:
+    metadata:
+      labels:
+        app: dhanan-fashions
+    spec:
+      containers:
+      - name: dhanan-fashions-container
+        image: dhananjayan-fashions-demo:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
