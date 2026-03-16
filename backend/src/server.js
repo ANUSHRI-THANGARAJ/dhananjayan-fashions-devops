@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 // Import routes
@@ -52,12 +53,21 @@ app.use('/api/cart', cartRoutes);
 // });
 //  const path = require("path");
 
-// Serve React build
-app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+// Serve React build (production-friendly path resolution)
+const frontendDistPath = path.join(__dirname, "..", "..", "frontend", "dist");
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
-});
+  app.get("*", (req, res) => {
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ message: 'API route not found' });
+    }
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+  });
+} else {
+  console.warn(`Frontend dist not found at ${frontendDistPath}. SPA routes will 404.`);
+}
+
 // Error handling middleware
 app.use(errorHandler);
 

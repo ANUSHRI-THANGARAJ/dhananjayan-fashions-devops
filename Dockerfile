@@ -1,19 +1,28 @@
-# Dockerfile for Dhananjayan Fashions backend Node.js app
-# 1. Use official Node.js runtime as the base image
-FROM node:18-alpine
+# Multi-stage Dockerfile: build frontend + backend and serve static from Express
 
-# 2. Create app directory
+# --- Stage 1: build frontend ---
+FROM node:18-alpine AS frontend-builder
+WORKDIR /usr/src/frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/. ./
+RUN npm run build
+
+# --- Stage 2: build backend and copy frontend dist ---
+FROM node:18-alpine AS backend
 WORKDIR /usr/src/app
-
-# 3. Copy package definitions and install dependencies first (cache layer benefit)
 COPY backend/package*.json ./
 RUN npm install --production
-
-# 4. Copy the rest of the app source
 COPY backend/. ./
 
-# 5. Expose port that the app uses (backend default 5000 or 3000, we use 3000 for demo)
-EXPOSE 3000
+# Copy built frontend into backend runtime tree
+COPY --from=frontend-builder /usr/src/frontend/dist ./frontend/dist
 
-# 6. Start the Node.js app
+# Optional (if you want to reduce image size by removing dev dependencies in backend stage):
+# RUN npm prune --production
+
+EXPOSE 3000
+ENV NODE_ENV=production
+ENV PORT=3000
+
 CMD ["npm", "start"]
