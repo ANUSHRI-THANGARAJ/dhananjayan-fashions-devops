@@ -50,8 +50,9 @@ app.use('/api/cart', cartRoutes);
 // app.get('/', (req, res) => {
 //     res.json({ message: 'Welcome to Dhananjayan Fashions API' });
 // });
- const path = require("path");
+//  const path = require("path");
 
+// Serve frontend files
 app.use(express.static(path.join(__dirname, "../../frontend")));
 
 app.get("/", (req, res) => {
