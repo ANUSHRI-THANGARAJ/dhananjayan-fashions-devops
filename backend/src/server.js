@@ -46,11 +46,17 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/cart', cartRoutes);
 
-// Basic route
-app.get('/', (req, res) => {
-    res.json({ message: 'Welcome to Dhananjayan Fashions API' });
-});
+// // Basic route
+// app.get('/', (req, res) => {
+//     res.json({ message: 'Welcome to Dhananjayan Fashions API' });
+// });
+ const path = require("path");
 
+app.use(express.static(path.join(__dirname, "../../frontend")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/index.html"));
+});
 // Error handling middleware
 app.use(errorHandler);
 
@@ -58,11 +64,4 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-});
-const path = require("path");
-
-app.use(express.static(path.join(__dirname, "../frontend")));
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
