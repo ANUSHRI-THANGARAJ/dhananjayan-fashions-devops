@@ -52,11 +52,11 @@ app.use('/api/cart', cartRoutes);
 // });
 //  const path = require("path");
 
-// Serve frontend files
-app.use(express.static(path.join(__dirname, "../../frontend")));
+// Serve React build
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
 });
 // Error handling middleware
 app.use(errorHandler);
